@@ -16,7 +16,7 @@ public class config {
 	/**
 	 * Parse the XML configuration file
 	 * @param  String name
-	 * @return ArrayList
+	 * @return Map<String, String>
 	 */
 	public Map<String, String> parseFile(String name) {
 		Map<String, String> elmMap = new HashMap<String, String>();
