@@ -1,13 +1,23 @@
 /**
- * @author Marc S. Brooks <devel@mbrooks.info>
+ *  tiny-http (server.java)
+ *  A compact, multi-threaded, HTTP server written in Java
+ *
+ *  Copyright 2013, Marc S. Brooks (http://mbrooks.info)
  */
-public class server {
+public class server implements Runnable {
 
 	/**
-	 * @param args
+	 * Start the server
 	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
+	public void run() {
+		consoleOut("Let's get this party started, right?");
+	}
+	
+	/**
+	 * Print message to console
+	 * @param String msg
+	 */
+	private void consoleOut(String msg) {
+		System.out.println(msg + "\n");
 	}
 }
