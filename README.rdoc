@@ -1,0 +1,7 @@
+= tiny-http
+
+A compact, multi-threaded, HTTP server currently in development.
+
+== Author
+
+{Marc S. Brooks}[https://github.com/nuxy]
