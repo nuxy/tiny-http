@@ -4,13 +4,19 @@
  *
  *  Copyright 2013, Marc S. Brooks (http://mbrooks.info)
  */
+import java.util.*;
+
 public class server implements Runnable {
 
 	/**
 	 * Start the server
 	 */
 	public void run() {
-		consoleOut("Let's get this party started, right?");
+		Map<String, String> confMap = (new config()).parseFile("config.xml");
+
+		for (Map.Entry<String, String> entry : confMap.entrySet()) {
+			consoleOut(entry.getValue());
+		}
 	}
 	
 	/**
