@@ -4,6 +4,8 @@
  *
  *  Copyright 2013, Marc S. Brooks (http://mbrooks.info)
  */
+package com.tiny.http;
+
 import java.io.*;
 import java.util.*;
 import javax.xml.parsers.*;

@@ -4,6 +4,8 @@
  *
  *  Copyright 2013, Marc S. Brooks (http://mbrooks.info)
  */
+package com.tiny.http;
+
 import java.util.concurrent.*;
 
 public class thread {
@@ -20,7 +22,7 @@ public class thread {
 
 			threadExec.execute(serverStart);
 		}
-		catch (Exception e){
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

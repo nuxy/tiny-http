@@ -4,6 +4,8 @@
  *
  *  Copyright 2013, Marc S. Brooks (http://mbrooks.info)
  */
+package com.tiny.http;
+
 import java.util.*;
 
 public class server implements Runnable {
