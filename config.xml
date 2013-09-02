@@ -2,6 +2,6 @@
 <config>
 	<server>
 		<listenPort>8080</listenPort>
-		<threadTotal>1</threadTotal>
+		<threadTotal>5</threadTotal>
 	</server>
 </config>
