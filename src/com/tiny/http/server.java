@@ -6,21 +6,24 @@
  */
 package com.tiny.http;
 
-import java.util.*;
-
 public class server implements Runnable {
+	private int port;
 
 	/**
-	 * Start the server
+	 * Define required fields
+	 * @param int listenPort
+	 */
+	public server(int listenPort) {
+		port = listenPort;
+	}
+
+	/**
+	 * Start the server instance
 	 */
 	public void run() {
-		Map<String, String> confMap = (new config()).parseFile("config.xml");
-
-		for (Map.Entry<String, String> entry : confMap.entrySet()) {
-			consoleOut(entry.getValue());
-		}
+		consoleOut("Starting server on port " + Integer.toString(port));
 	}
-	
+
 	/**
 	 * Print message to console
 	 * @param String msg
