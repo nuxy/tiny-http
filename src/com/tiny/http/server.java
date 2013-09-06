@@ -6,6 +6,9 @@
  */
 package com.tiny.http;
 
+import java.net.ServerSocket;
+import java.net.Socket;
+
 public class server implements Runnable {
 	private int port;
 
@@ -22,6 +25,40 @@ public class server implements Runnable {
 	 */
 	public void run() {
 		consoleOut("Starting server on port " + Integer.toString(port));
+
+		int clientNum = 0;
+
+		try {
+			ServerSocket listener = new ServerSocket(port);
+
+			try {
+				while (true) {
+					httpReqHandler(listener.accept(), clientNum++);
+				}
+			}
+			finally {
+				listener.close();
+			}
+		}
+		catch (Exception e) {
+			consoleOut("Internal server error: " + e.getMessage());
+		}
+	}
+
+	/**
+	 * Handle the HTTP client request
+	 * @param Socket socket
+	 * @param int num
+	 */
+	private void httpReqHandler(Socket socket, int num) {
+		consoleOut("Client connection " + Integer.toString(num) + " available");
+
+		try {
+			socket.close();
+		}
+		catch (Exception e) {
+			consoleOut("Internal server error: " + e.getMessage());
+		}
 	}
 
 	/**
