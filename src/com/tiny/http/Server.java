@@ -49,7 +49,7 @@ public class Server implements Runnable {
 			}
 		}
 		catch (Exception e) {
-			consoleOut("Internal server error: " + e.getMessage());
+			consoleOut("error: " + e.getMessage());
 		}
 	}
 
@@ -71,7 +71,7 @@ public class Server implements Runnable {
 			socket.close();
 		}
 		catch (IOException e) {
-			consoleOut("Internal server error: " + e.getMessage());
+			consoleOut("error: " + e.getMessage());
 		}
 	}
 
@@ -97,27 +97,28 @@ public class Server implements Runnable {
 			String path   = fields[1];
 			String proto  = fields[2];
 
-			if (method == null) {
-				output.writeBytes(sendError(501));
+			if (method == null || proto == null) {
+				output.writeBytes(sendResponse(501));
 				output.close();
-				return;
 			}
-
-			consoleOut("success");
+			else {
+				output.writeBytes(sendResponse(200));
+				output.close();
+			}
 		}
 		catch (IOException e) {
-			consoleOut("Internal server error: " + e.getMessage());
+			consoleOut("error: " + e.getMessage());
 		}
 
 		return;
 	}
 
 	/**
-	 * Send the client an HTTP error response
-	 * @param int statusCode
+	 * Send the client a response
+	 * @param  int    statusCode
 	 * @return String res
 	 */
-	private String sendError(int statusCode) {
+	private String sendResponse(int statusCode) {
 		String res = "HTTP/1.0 ";
 
 		switch (statusCode) {
@@ -153,6 +154,10 @@ public class Server implements Runnable {
 				res += "501 Not Implemented";
 			break;
 		}
+
+		res += "\r\n";
+		res += "Content-Type: text/html";
+		res += "\r\n";
 
 		return res;
 	}
