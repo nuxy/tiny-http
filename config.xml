@@ -3,5 +3,6 @@
 	<server>
 		<listenPort>8080</listenPort>
 		<threadTotal>5</threadTotal>
+		<enableLog>http.log</enableLog>
 	</server>
 </config>
