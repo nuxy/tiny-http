@@ -8,12 +8,13 @@ package com.tiny.http;
 
 import java.io.FileOutputStream;
 import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
 public class Log extends Handler {
 	FileOutputStream outputStream;
 
 	/**
-	 * Define required fields
+	 * Define required methods
 	 */
 	public Log() {
 		Config conf = new Config();
@@ -26,4 +27,8 @@ public class Log extends Handler {
 			e.printStackTrace();
 		}
 	}
+
+	public void publish(LogRecord record) { }
+	public void flush() { }
+	public void close() { }
 }
