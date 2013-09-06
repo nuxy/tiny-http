@@ -1,5 +1,5 @@
 /**
- *  tiny-http (config.java)
+ *  tiny-http (Config.java)
  *  A compact, multi-threaded, HTTP server written in Java
  *
  *  Copyright 2013, Marc S. Brooks (http://mbrooks.info)
@@ -13,7 +13,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.*;
 
-public class config {
+public class Config {
 	private Document doc = null;
 
 	/**

@@ -1,5 +1,5 @@
 /**
- *  tiny-http (server.java)
+ *  tiny-http (Server.java)
  *  A compact, multi-threaded, HTTP server written in Java
  *
  *  Copyright 2013, Marc S. Brooks (http://mbrooks.info)
@@ -9,14 +9,14 @@ package com.tiny.http;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class server implements Runnable {
+public class Server implements Runnable {
 	private int port;
 
 	/**
 	 * Define required fields
 	 * @param int listenPort
 	 */
-	public server(int listenPort) {
+	public Server(int listenPort) {
 		port = listenPort;
 	}
 
