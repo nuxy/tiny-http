@@ -12,6 +12,8 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Server implements Runnable {
 	private int port;
@@ -82,7 +84,20 @@ public class Server implements Runnable {
 		try {
 			String text = input.readLine();
 
-			consoleOut("Client says: " + text);
+			Pattern p = Pattern.compile("^([A-Z]{3,6})\\s([\\/\\w&+%-]{1,2000})\\s(HTTP\\/1.[0-1])$");
+			Matcher m = p.matcher(text);
+
+			String[] fields = new String[2];
+
+			while (m.find()) {
+				fields = new String[]{ m.group(1), m.group(2), m.group(3) };
+			}
+
+			String method = fields[0];
+			String uri    = fields[1];
+			String proto  = fields[2];
+
+			consoleOut("Client request: " + method + " " + uri + " " + proto);
 		}
 		catch (IOException e) {
 			consoleOut("Internal server error: " + e.getMessage());
