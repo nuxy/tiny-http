@@ -98,14 +98,9 @@ public class Server implements Runnable {
 			String proto  = fields[2];
 
 			if (method == null) {
-				try {
-					output.writeBytes("error");
-					output.close();
-					return;
-				}
-				catch (Exception e) {
-					consoleOut("Bad request: " + e.getMessage());
-				}
+				output.writeBytes(sendError(501));
+				output.close();
+				return;
 			}
 
 			consoleOut("success");
@@ -115,6 +110,51 @@ public class Server implements Runnable {
 		}
 
 		return;
+	}
+
+	/**
+	 * Send the client an HTTP error response
+	 * @param int statusCode
+	 * @return String res
+	 */
+	private String sendError(int statusCode) {
+		String res = "HTTP/1.0 ";
+
+		switch (statusCode) {
+			case 200:
+				res += "200 OK";
+			break;
+
+			case 201:
+				res += "201 Created";
+			break;
+
+			case 202:
+				res += "202 Accepted";
+			break;
+
+			case 400:
+				res += "400 Bad Request";
+			break;
+
+			case 403:
+				res += "403 Forbidden";
+			break;
+
+			case 404:
+				res += "404 Not Found";
+			break;
+
+			case 500:
+				res += "500 Internal Server Error";
+			break;
+
+			case 501:
+				res += "501 Not Implemented";
+			break;
+		}
+
+		return res;
 	}
 
 	/**
