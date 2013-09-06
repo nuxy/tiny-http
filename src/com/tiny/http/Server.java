@@ -84,7 +84,7 @@ public class Server implements Runnable {
 		try {
 			String text = input.readLine();
 
-			Pattern p = Pattern.compile("^([A-Z]{3,6})\\s([\\/\\w&+%-]{1,2000})\\s(HTTP\\/1.[0-1])$");
+			Pattern p = Pattern.compile("^(GET|POST|PUT|DELETE)\\s([\\/\\w&+%-]{1,2000})\\s(HTTP\\/1.[0-1])$");
 			Matcher m = p.matcher(text);
 
 			String[] fields = new String[2];
@@ -94,10 +94,21 @@ public class Server implements Runnable {
 			}
 
 			String method = fields[0];
-			String uri    = fields[1];
+			String path   = fields[1];
 			String proto  = fields[2];
 
-			consoleOut("Client request: " + method + " " + uri + " " + proto);
+			if (method == null) {
+				try {
+					output.writeBytes("error");
+					output.close();
+					return;
+				}
+				catch (Exception e) {
+					consoleOut("Bad request: " + e.getMessage());
+				}
+			}
+
+			consoleOut("success");
 		}
 		catch (IOException e) {
 			consoleOut("Internal server error: " + e.getMessage());
