@@ -7,14 +7,16 @@
 package com.tiny.http;
 
 import java.io.FileOutputStream;
+import java.io.PrintWriter;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
 public class Log extends Handler {
 	FileOutputStream outputStream;
+	PrintWriter      printWriter;
 
 	/**
-	 * Define required methods
+	 * Define custom log hander
 	 */
 	public Log() {
 		Config conf = new Config();
@@ -22,13 +24,34 @@ public class Log extends Handler {
 
 		try {
 			outputStream = new FileOutputStream(conf.getOptionValByName("server","enableLog"));
+			printWriter  = new PrintWriter(outputStream);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void publish(LogRecord record) { }
-	public void flush() { }
-	public void close() { }
+	/**
+	 * Output the formatted data to the file
+	 * @param LogRecord record
+	 */
+	public void publish(LogRecord record) {
+		if (!isLoggable(record)) return;
+
+		printWriter.println(getFormatter().format(record));
+	}
+
+	/**
+	 * Flush any buffered output
+	 */
+	public void flush() {
+		printWriter.flush();
+	}
+
+	/**
+	 * Close handler to free associated resources
+	 */
+	public void close() throws SecurityException {
+		printWriter.close();
+	}
 }
