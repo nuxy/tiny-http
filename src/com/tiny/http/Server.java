@@ -8,6 +8,7 @@ package com.tiny.http;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -49,7 +50,7 @@ public class Server implements Runnable {
 			}
 		}
 		catch (Exception e) {
-			consoleOut("error: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
@@ -66,8 +67,9 @@ public class Server implements Runnable {
 			BufferedReader    buffer = new BufferedReader(input);
 			DataOutputStream  output = new DataOutputStream(socket.getOutputStream());
 
-			processRequest(buffer, output);
+			processReq(buffer, output);
 
+			output.close();
 			socket.close();
 		}
 		catch (IOException e) {
@@ -77,14 +79,14 @@ public class Server implements Runnable {
 
 	/**
 	 * Process the HTTP request header; send client a valid response
-	 * @param BufferedReader   input
-	 * @param DataOutputStream output
+	 * @param  BufferedReader   input
+	 * @param  DataOutputStream output
 	 */
-	private void processRequest(BufferedReader input, DataOutputStream output) {
+	private void processReq(BufferedReader input, DataOutputStream output) {
 		try {
 			String text = input.readLine();
 
-			Pattern p = Pattern.compile("^(GET|POST|PUT|DELETE)\\s([\\/\\w&+%-]{1,2000})\\s(HTTP\\/1.[0-1])$");
+			Pattern p = Pattern.compile("^(GET|POST|PUT|DELETE)\\s([\\/\\w&+%-.]{1,2000})\\s(HTTP\\/1.[0-1])$");
 			Matcher m = p.matcher(text);
 
 			String[] fields = new String[2];
@@ -97,28 +99,57 @@ public class Server implements Runnable {
 			String path   = fields[1];
 			String proto  = fields[2];
 
-			if (method == null || proto == null) {
-				output.writeBytes(sendResponse(501));
-				output.close();
+			if (method == null || proto == null || path.contains("..")) {
+				output.writeBytes(genHeader(501));
+				return;
+			}
+
+			StringBuffer file = getFile(path);
+
+			if (file.length() == 0) {
+				output.writeBytes(genHeader(404));
 			}
 			else {
-				output.writeBytes(sendResponse(200));
-				output.close();
+				output.writeBytes(genHeader(200) + file);
 			}
 		}
 		catch (IOException e) {
 			consoleOut("error: " + e.getMessage());
 		}
-
-		return;
 	}
 
 	/**
-	 * Send the client a response
-	 * @param  int    statusCode
-	 * @return String res
+	 * Retrieve contents of a file for a given path
+	 * @param  String path
+	 * @return StringBuffer
 	 */
-	private String sendResponse(int statusCode) {
+	private StringBuffer getFile(String path) {
+		StringBuffer content = new StringBuffer("");
+
+		int ch;
+
+		try {
+			FileInputStream file = new FileInputStream(path);
+
+			while ((ch = file.read()) != -1) {
+				content.append((char)ch);
+			}
+
+			file.close();
+		}
+		catch (IOException e) {
+			consoleOut("error: " + e.getMessage());
+		}
+
+		return content;
+	}
+
+	/**
+	 * Generate the HTTP header response
+	 * @param  int statusCode
+	 * @return String
+	 */
+	private String genHeader(int statusCode) {
 		String res = "HTTP/1.0 ";
 
 		switch (statusCode) {
@@ -164,7 +195,7 @@ public class Server implements Runnable {
 
 	/**
 	 * Print message to console
-	 * @param String msg
+	 * @param String str
 	 */
 	private void consoleOut(String msg) {
 		System.out.println(msg + "\n");
