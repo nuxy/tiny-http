@@ -6,7 +6,7 @@
 		<LogFile>request.log</LogFile>
 	</Server>
 	<Website>
-		<DocumentRoot>./public</DocumentRoot>
+		<DocumentRoot>public</DocumentRoot>
 		<DirectoryIndex>index.html</DirectoryIndex>
 	</Website>
 </Config>
