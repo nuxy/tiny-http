@@ -18,12 +18,9 @@ public class Log extends Handler {
 	/**
 	 * Define custom log hander
 	 */
-	public Log() {
-		Config conf = new Config();
-		conf.loadFile("config.xml");
-
+	public Log(String file) {
 		try {
-			outputStream = new FileOutputStream(conf.getOptionValByName("server","enableLog"));
+			outputStream = new FileOutputStream(file);
 			printWriter  = new PrintWriter(outputStream);
 		}
 		catch (Exception e) {
