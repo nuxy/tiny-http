@@ -15,16 +15,15 @@ public class Launch {
 	 * @param String[] args
 	 */
 	public static void main(String[] args) {
-		Config conf = new Config();
-		conf.loadFile("config.xml");
+		Config config = new Config();
+		config.loadFile("config.xml");
 
-		int threadTotal = new Integer(conf.getOptionValByName("server","threadTotal"));
-		int listenPort  = new Integer(conf.getOptionValByName("server","listenPort"));
+		int threads = new Integer(config.getOptionValByName("server","threadTotal"));
 
-		ExecutorService threadExec = Executors.newFixedThreadPool(threadTotal);
+		ExecutorService threadExec = Executors.newFixedThreadPool(threads);
 
 		try {
-			Server startServer = new Server(listenPort);
+			Server startServer = new Server(config);
 			threadExec.execute(startServer);
 		}
 		catch (Exception e) {
