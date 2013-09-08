@@ -3,7 +3,7 @@
 	<server>
 		<listenPort>8080</listenPort>
 		<threadTotal>5</threadTotal>
-		<enableLog>http.log</enableLog>
+		<logFile>request.log</logFile>
 	</server>
 	<website>
 	    <DocumentRoot>/</DocumentRoot>
