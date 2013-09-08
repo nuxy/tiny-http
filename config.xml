@@ -5,4 +5,7 @@
 		<threadTotal>5</threadTotal>
 		<enableLog>http.log</enableLog>
 	</server>
+	<website>
+	    <DocumentRoot>/</DocumentRoot>
+	</website>
 </config>
