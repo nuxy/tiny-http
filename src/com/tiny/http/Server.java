@@ -23,6 +23,7 @@ import javax.activation.MimetypesFileTypeMap;
 public class Server implements Runnable {
 	private Config config;
 	private Logger logger;
+	private String docRoot;
 
 	/**
 	 * Define required fields
@@ -109,13 +110,15 @@ public class Server implements Runnable {
 
 		// validate string arguments
 		if (method == null || path.contains("..") || proto == null) {
-			output.writeBytes(genHeader(500, null));
+			output.writeBytes(genError(403));
 			return;
 		}
 
 		// send requested file, if exists
 		try {
-			String f = config.getOptionValByName("Website","DocumentRoot") + path;
+			docRoot = config.getOptionValByName("Website","DocumentRoot");
+
+			String f = docRoot + path;
 
 			if (path.endsWith("/")) {
 				f += config.getOptionValByName("Website","DirectoryIndex");
@@ -124,7 +127,7 @@ public class Server implements Runnable {
 			StringBuffer file = getFile(f);
 
 			if (file.length() == 0) {
-				output.writeBytes(genHeader(404, null));
+				output.writeBytes(genError(404));
 				return;
 			}
 
@@ -136,7 +139,7 @@ public class Server implements Runnable {
 			output.writeBytes(genHeader(200, type) + "\r\n" + file.toString());
 		}
 		catch (IOException e) {
-			output.writeBytes(genHeader(403, null));
+			output.writeBytes(genError(500));
 		}
 	}
 
@@ -145,18 +148,21 @@ public class Server implements Runnable {
 	 * @param  String path
 	 * @return StringBuffer
 	 */
-	private StringBuffer getFile(String path) throws IOException {
+	private StringBuffer getFile(String path) {
 		StringBuffer content = new StringBuffer("");
 
-		int ch = 0;
+		try {
+			int ch = 0;
 
-		FileInputStream file = new FileInputStream(path);
+			FileInputStream file = new FileInputStream(path);
 
-		while ((ch = file.read()) != -1) {
-			content.append((char)ch);
+			while ((ch = file.read()) != -1) {
+				content.append((char)ch);
+			}
+
+			file.close();
 		}
-
-		file.close();
+		catch (IOException e) {}
 
 		return content;
 	}
@@ -164,7 +170,7 @@ public class Server implements Runnable {
 	/**
 	 * Generate the HTTP header response
 	 * @param  int    statusCode
-	 * @param  String contentType
+	 * @param  String mimeType
 	 * @return String
 	 */
 	private String genHeader(int statusCode, String mimeType) {
@@ -189,8 +195,27 @@ public class Server implements Runnable {
 		}
 
 		res += "\r\n";
-		res += "Content-Type: " + ((mimeType != null) ? mimeType : "text/plain");
+		res += "Content-Type: " + ((mimeType != null) ? mimeType : "text/html");
 		res += "\r\n";
+
+		return res;
+	}
+
+	/**
+	 * Generate error response, includes HTTP header
+	 * @param  int statusCode
+	 * @return String
+	 */
+	private String genError(int statusCode) throws IOException {
+		String res = new String(genHeader(statusCode, null));
+
+		res += "\r\n";
+
+		StringBuffer file = getFile(docRoot + "/error-" + statusCode + ".html");
+
+		if (file.length() != 0) {
+			res += file;
+		}
 
 		return res;
 	}
