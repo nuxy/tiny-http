@@ -14,13 +14,15 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.activation.MimetypesFileTypeMap;
 
 public class Server implements Runnable {
 	private Config config;
-	private Log    logger;
+	private Logger logger;
 
 	/**
 	 * Define required fields
@@ -28,7 +30,7 @@ public class Server implements Runnable {
 	 */
 	public Server(Config c) {
 		config = c;
-		logger = new Log(config.getOptionValByName("Server","LogFile"));
+		logger = new Logger(config.getOptionValByName("Server","LogFile"));
 	}
 
 	/**
@@ -37,7 +39,7 @@ public class Server implements Runnable {
 	public void run() {
 		String port = config.getOptionValByName("Server","ListenPort");
 
-		consoleOut("Starting server on port " + port);
+		logger.publish(new LogRecord(Level.INFO, "Starting server on port " + port));
 
 		int clientNum = 1;
 
@@ -45,7 +47,7 @@ public class Server implements Runnable {
 			ServerSocket listener = new ServerSocket(new Integer(port));
 
 			try {
-				consoleOut("Waiting for client requests...");
+				logger.publish(new LogRecord(Level.INFO, "Waiting for client requests..."));
 
 				while (true) {
 					reqHandler(listener.accept(), clientNum++);
@@ -66,7 +68,7 @@ public class Server implements Runnable {
 	 * @param int    num
 	 */
 	private void reqHandler(Socket socket, int num) {
-		consoleOut("Client " + Integer.toString(num) + " connected");
+		logger.publish(new LogRecord(Level.INFO, "Client " + Integer.toString(num) + " connected"));
 
 		try {
 			InputStreamReader input  = new InputStreamReader(socket.getInputStream());
@@ -79,7 +81,7 @@ public class Server implements Runnable {
 			socket.close();
 		}
 		catch (IOException e) {
-			consoleOut("error: " + e.getMessage());
+			logger.publish(new LogRecord(Level.WARNING, e.getMessage()));
 		}
 	}
 
@@ -191,13 +193,5 @@ public class Server implements Runnable {
 		res += "\r\n";
 
 		return res;
-	}
-
-	/**
-	 * Print message to console
-	 * @param String str
-	 */
-	private void consoleOut(String msg) {
-		System.out.println(msg + "\n");
 	}
 }
