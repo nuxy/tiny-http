@@ -1,6 +1,14 @@
 = tiny-http
 
-A compact, multi-threaded, HTTP server currently in development.
+A compact, multi-threaded, HTTP server written in Java
+
+== Features
+
+- Compatible with Java 1.6
+- Support for concurrent GET requests using threads
+- Fully customizable HTML error pages
+- Ability to define custom MIME types
+- Runs seamlessly on Android without changes
 
 == Author
 
