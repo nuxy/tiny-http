@@ -113,7 +113,13 @@ public class Server implements Runnable {
 
 		// send requested file, if exists
 		try {
-			StringBuffer file = getFile(path);
+			String f = config.getOptionValByName("Website","DocumentRoot") + path;
+
+			if (path.endsWith("/")) {
+				f += config.getOptionValByName("Website","DirectoryIndex");
+			}
+
+			StringBuffer file = getFile(f);
 
 			if (file.length() == 0) {
 				output.writeBytes(genHeader(404, null));
@@ -122,7 +128,7 @@ public class Server implements Runnable {
 
 			MimetypesFileTypeMap map = new MimetypesFileTypeMap("mime.types");
 
-			String name = new File(path).getName();
+			String name = new File(f).getName();
 			String type = map.getContentType(name);
 
 			output.writeBytes(genHeader(200, type) + "\r\n" + file.toString());
