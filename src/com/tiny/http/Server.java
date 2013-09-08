@@ -8,6 +8,7 @@ package com.tiny.http;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
@@ -15,6 +16,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.activation.MimetypesFileTypeMap;
 
 public class Server implements Runnable {
 	private int port;
@@ -100,17 +102,22 @@ public class Server implements Runnable {
 			String proto  = fields[2];
 
 			if (method == null || proto == null || path.contains("..")) {
-				output.writeBytes(genHeader(501));
+				output.writeBytes(genHeader(501, null));
 				return;
 			}
 
 			StringBuffer file = getFile(path);
 
 			if (file.length() == 0) {
-				output.writeBytes(genHeader(404));
+				output.writeBytes(genHeader(404, null));
 			}
 			else {
-				output.writeBytes(genHeader(200) + file);
+				MimetypesFileTypeMap map = new MimetypesFileTypeMap("mime.types");
+
+				String name = new File(path).getName();
+				String type = map.getContentType(name);
+
+				output.writeBytes(genHeader(200, type) + "\r\n" + file.toString());
 			}
 		}
 		catch (IOException e) {
@@ -146,10 +153,11 @@ public class Server implements Runnable {
 
 	/**
 	 * Generate the HTTP header response
-	 * @param  int statusCode
+	 * @param  int    statusCode
+	 * @param  String contentType
 	 * @return String
 	 */
-	private String genHeader(int statusCode) {
+	private String genHeader(int statusCode, String mimeType) {
 		String res = "HTTP/1.0 ";
 
 		switch (statusCode) {
@@ -187,7 +195,7 @@ public class Server implements Runnable {
 		}
 
 		res += "\r\n";
-		res += "Content-Type: text/html";
+		res += "Content-Type: " + ((mimeType != null) ? mimeType : "text/plain");
 		res += "\r\n";
 
 		return res;
