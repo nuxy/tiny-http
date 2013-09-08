@@ -14,6 +14,7 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.regex.Matcher;
@@ -42,8 +43,6 @@ public class Server implements Runnable {
 
 		logger.publish(new LogRecord(Level.INFO, "Starting server on port " + port));
 
-		int clientNum = 1;
-
 		try {
 			ServerSocket listener = new ServerSocket(new Integer(port));
 
@@ -51,7 +50,7 @@ public class Server implements Runnable {
 				logger.publish(new LogRecord(Level.INFO, "Waiting for client requests..."));
 
 				while (true) {
-					reqHandler(listener.accept(), clientNum++);
+					reqHandler(listener.accept());
 				}
 			}
 			finally {
@@ -66,17 +65,16 @@ public class Server implements Runnable {
 	/**
 	 * Handle the HTTP client request
 	 * @param Socket socket
-	 * @param int    num
 	 */
-	private void reqHandler(Socket socket, int num) {
-		logger.publish(new LogRecord(Level.INFO, "Client " + Integer.toString(num) + " connected"));
+	private void reqHandler(Socket socket) {
+		SocketAddress clientIp = socket.getRemoteSocketAddress();
 
 		try {
 			InputStreamReader input  = new InputStreamReader(socket.getInputStream());
 			BufferedReader    buffer = new BufferedReader(input);
 			DataOutputStream  output = new DataOutputStream(socket.getOutputStream());
 
-			processReq(buffer, output);
+			processReq(buffer, output, clientIp);
 
 			output.close();
 			socket.close();
@@ -88,10 +86,11 @@ public class Server implements Runnable {
 
 	/**
 	 * Process the HTTP request header; send client a valid response
-	 * @param  BufferedReader   input
-	 * @param  DataOutputStream output
+	 * @param BufferedReader   input
+	 * @param DataOutputStream output
+	 * @param SocketAddress    clientIp
 	 */
-	private void processReq(BufferedReader input, DataOutputStream output) throws IOException {
+	private void processReq(BufferedReader input, DataOutputStream output, SocketAddress clientIp) throws IOException {
 		String text = input.readLine();
 
 		// parse request string
@@ -137,6 +136,8 @@ public class Server implements Runnable {
 			String type = map.getContentType(name);
 
 			output.writeBytes(genHeader(200, type) + "\r\n" + file.toString());
+
+			logger.publish(new LogRecord(Level.INFO, clientIp.toString().split("/")[1] + "\t" + method + " - " + f));
 		}
 		catch (IOException e) {
 			output.writeBytes(genError(500));
@@ -162,7 +163,9 @@ public class Server implements Runnable {
 
 			file.close();
 		}
-		catch (IOException e) {}
+		catch (IOException e) {
+			logger.publish(new LogRecord(Level.WARNING, e.getMessage()));
+		}
 
 		return content;
 	}
