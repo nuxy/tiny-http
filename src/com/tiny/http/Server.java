@@ -19,26 +19,30 @@ import java.util.regex.Pattern;
 import javax.activation.MimetypesFileTypeMap;
 
 public class Server implements Runnable {
-	private int port;
+	private Config config;
+	private Log    logger;
 
 	/**
 	 * Define required fields
-	 * @param int listenPort
+	 * @param Config c
 	 */
-	public Server(int listenPort) {
-		port = listenPort;
+	public Server(Config c) {
+		config = c;
+		logger = new Log(config.getOptionValByName("server","logFile"));
 	}
 
 	/**
 	 * Start the server instance
 	 */
 	public void run() {
-		consoleOut("Starting server on port " + Integer.toString(port));
+		String port = config.getOptionValByName("server","listenPort");
+
+		consoleOut("Starting server on port " + port);
 
 		int clientNum = 1;
 
 		try {
-			ServerSocket listener = new ServerSocket(port);
+			ServerSocket listener = new ServerSocket(new Integer(port));
 
 			try {
 				consoleOut("Waiting for client requests...");
@@ -107,21 +111,21 @@ public class Server implements Runnable {
 			return;
 		}
 
-		// send requested file, if available
+		// send requested file, if exists
 		try {
 			StringBuffer file = getFile(path);
 
 			if (file.length() == 0) {
 				output.writeBytes(genHeader(404, null));
+				return;
 			}
-			else {
-				MimetypesFileTypeMap map = new MimetypesFileTypeMap("mime.types");
 
-				String name = new File(path).getName();
-				String type = map.getContentType(name);
+			MimetypesFileTypeMap map = new MimetypesFileTypeMap("mime.types");
 
-				output.writeBytes(genHeader(200, type) + "\r\n" + file.toString());
-			}
+			String name = new File(path).getName();
+			String type = map.getContentType(name);
+
+			output.writeBytes(genHeader(200, type) + "\r\n" + file.toString());
 		}
 		catch (IOException e) {
 			output.writeBytes(genHeader(403, null));
