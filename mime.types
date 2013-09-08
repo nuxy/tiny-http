@@ -2,17 +2,17 @@
 # List of common Internet media types
 #
 application/javascript		js
-application/pdf				pdf
-application/rss+xml			rss
-application/xml				xml
-audio/mpeg					mp3
-image/gif					gif
-image/jpeg					jpeg jpg
-image/png					png
-image/svg+xml				svg
-text/css					css
-text/html					html htm
-text/plain					txt
-video/mpeg					mpeg mpg
-video/mp4					mp4
-video/quicktime				mov
+application/pdf			pdf
+application/rss+xml		rss
+application/xml			xml
+audio/mpeg			mp3
+image/gif			gif
+image/jpeg			jpeg jpg
+image/png			png
+image/svg+xml			svg
+text/css			css
+text/html			html htm
+text/plain			txt
+video/mpeg			mpeg mpg
+video/mp4			mp4
+video/quicktime			mov
