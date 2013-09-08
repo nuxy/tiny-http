@@ -7,5 +7,6 @@
 	</Server>
 	<Website>
 		<DocumentRoot>./public</DocumentRoot>
+		<DirectoryIndex>index.html</DirectoryIndex>
 	</Website>
 </Config>
