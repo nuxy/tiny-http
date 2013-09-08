@@ -28,14 +28,14 @@ public class Server implements Runnable {
 	 */
 	public Server(Config c) {
 		config = c;
-		logger = new Log(config.getOptionValByName("server","logFile"));
+		logger = new Log(config.getOptionValByName("Server","LogFile"));
 	}
 
 	/**
 	 * Start the server instance
 	 */
 	public void run() {
-		String port = config.getOptionValByName("server","listenPort");
+		String port = config.getOptionValByName("Server","ListenPort");
 
 		consoleOut("Starting server on port " + port);
 

@@ -18,7 +18,7 @@ public class Launch {
 		Config config = new Config();
 		config.loadFile("config.xml");
 
-		int threads = new Integer(config.getOptionValByName("server","threadTotal"));
+		int threads = new Integer(config.getOptionValByName("Server","ThreadTotal"));
 
 		ExecutorService threadExec = Executors.newFixedThreadPool(threads);
 

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<config>
-	<server>
-		<listenPort>8080</listenPort>
-		<threadTotal>5</threadTotal>
-		<logFile>request.log</logFile>
-	</server>
-	<website>
-	    <DocumentRoot>/</DocumentRoot>
-	</website>
-</config>
+<Config>
+	<Server>
+		<ListenPort>8080</ListenPort>
+		<ThreadTotal>5</ThreadTotal>
+		<LogFile>request.log</LogFile>
+	</Server>
+	<Website>
+		<DocumentRoot>./public</DocumentRoot>
+	</Website>
+</Config>
