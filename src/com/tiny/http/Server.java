@@ -92,7 +92,7 @@ public class Server implements Runnable {
 		String text = input.readLine();
 
 		// parse request string
-		Pattern p = Pattern.compile("^(GET|POST|PUT|DELETE)\\s([\\/\\w&+%-.]{1,2000})\\s(HTTP\\/1.[0-1])$");
+		Pattern p = Pattern.compile("^(GET)\\s([\\/\\w&+%-.]{1,2000})\\s(HTTP\\/1.[0-1])$");
 		Matcher m = p.matcher(text);
 
 		String[] fields = new String[2];
@@ -107,7 +107,7 @@ public class Server implements Runnable {
 
 		// validate string arguments
 		if (method == null || path.contains("..") || proto == null) {
-			output.writeBytes(genHeader(501, null));
+			output.writeBytes(genHeader(500, null));
 			return;
 		}
 
@@ -173,18 +173,6 @@ public class Server implements Runnable {
 				res += "200 OK";
 			break;
 
-			case 201:
-				res += "201 Created";
-			break;
-
-			case 202:
-				res += "202 Accepted";
-			break;
-
-			case 400:
-				res += "400 Bad Request";
-			break;
-
 			case 403:
 				res += "403 Forbidden";
 			break;
@@ -195,10 +183,6 @@ public class Server implements Runnable {
 
 			case 500:
 				res += "500 Internal Server Error";
-			break;
-
-			case 501:
-				res += "501 Not Implemented";
 			break;
 		}
 
