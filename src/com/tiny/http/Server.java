@@ -44,7 +44,7 @@ public class Server implements Runnable {
 				consoleOut("Waiting for client requests...");
 
 				while (true) {
-					httpReqHandler(listener.accept(), clientNum++);
+					reqHandler(listener.accept(), clientNum++);
 				}
 			}
 			finally {
@@ -61,7 +61,7 @@ public class Server implements Runnable {
 	 * @param Socket socket
 	 * @param int    num
 	 */
-	private void httpReqHandler(Socket socket, int num) {
+	private void reqHandler(Socket socket, int num) {
 		consoleOut("Client " + Integer.toString(num) + " connected");
 
 		try {
@@ -84,28 +84,31 @@ public class Server implements Runnable {
 	 * @param  BufferedReader   input
 	 * @param  DataOutputStream output
 	 */
-	private void processReq(BufferedReader input, DataOutputStream output) {
+	private void processReq(BufferedReader input, DataOutputStream output) throws IOException {
+		String text = input.readLine();
+
+		// parse request string
+		Pattern p = Pattern.compile("^(GET|POST|PUT|DELETE)\\s([\\/\\w&+%-.]{1,2000})\\s(HTTP\\/1.[0-1])$");
+		Matcher m = p.matcher(text);
+
+		String[] fields = new String[2];
+
+		while (m.find()) {
+			fields = new String[]{ m.group(1), m.group(2), m.group(3) };
+		}
+
+		String method = fields[0];
+		String path   = fields[1];
+		String proto  = fields[2];
+
+		// validate string arguments
+		if (method == null || path.contains("..") || proto == null) {
+			output.writeBytes(genHeader(501, null));
+			return;
+		}
+
+		// send requested file, if available
 		try {
-			String text = input.readLine();
-
-			Pattern p = Pattern.compile("^(GET|POST|PUT|DELETE)\\s([\\/\\w&+%-.]{1,2000})\\s(HTTP\\/1.[0-1])$");
-			Matcher m = p.matcher(text);
-
-			String[] fields = new String[2];
-
-			while (m.find()) {
-				fields = new String[]{ m.group(1), m.group(2), m.group(3) };
-			}
-
-			String method = fields[0];
-			String path   = fields[1];
-			String proto  = fields[2];
-
-			if (method == null || proto == null || path.contains("..")) {
-				output.writeBytes(genHeader(501, null));
-				return;
-			}
-
 			StringBuffer file = getFile(path);
 
 			if (file.length() == 0) {
@@ -121,7 +124,7 @@ public class Server implements Runnable {
 			}
 		}
 		catch (IOException e) {
-			consoleOut("error: " + e.getMessage());
+			output.writeBytes(genHeader(403, null));
 		}
 	}
 
@@ -130,23 +133,18 @@ public class Server implements Runnable {
 	 * @param  String path
 	 * @return StringBuffer
 	 */
-	private StringBuffer getFile(String path) {
+	private StringBuffer getFile(String path) throws IOException {
 		StringBuffer content = new StringBuffer("");
 
-		int ch;
+		int ch = 0;
 
-		try {
-			FileInputStream file = new FileInputStream(path);
+		FileInputStream file = new FileInputStream(path);
 
-			while ((ch = file.read()) != -1) {
-				content.append((char)ch);
-			}
-
-			file.close();
+		while ((ch = file.read()) != -1) {
+			content.append((char)ch);
 		}
-		catch (IOException e) {
-			consoleOut("error: " + e.getMessage());
-		}
+
+		file.close();
 
 		return content;
 	}
