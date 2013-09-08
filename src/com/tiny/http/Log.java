@@ -19,6 +19,8 @@ public class Log extends Handler {
 	 * Define custom log hander
 	 */
 	public Log(String file) {
+		super();
+
 		try {
 			outputStream = new FileOutputStream(file);
 			printWriter  = new PrintWriter(outputStream);
@@ -35,7 +37,18 @@ public class Log extends Handler {
 	public void publish(LogRecord record) {
 		if (!isLoggable(record)) return;
 
-		printWriter.println(getFormatter().format(record));
+		printWriter.println(formatStr(record));
+
+		flush();
+	}
+
+	/**
+	 * Return a custom formatter string
+	 * @param LogRecord record
+	 * @return String
+	 */
+	private String formatStr(LogRecord record) {
+		return new java.util.Date() + "\t" + record.getLevel() + "\t" + record.getMessage();
 	}
 
 	/**
