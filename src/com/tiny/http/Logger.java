@@ -1,5 +1,5 @@
 /**
- *  tiny-http (Log.java)
+ *  tiny-http (Logger.java)
  *  A compact, multi-threaded, HTTP server written in Java
  *
  *  Copyright 2013, Marc S. Brooks (http://mbrooks.info)
@@ -11,14 +11,14 @@ import java.io.PrintWriter;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
-public class Log extends Handler {
+public class Logger extends Handler {
 	FileOutputStream outputStream;
 	PrintWriter      printWriter;
 
 	/**
 	 * Define custom log hander
 	 */
-	public Log(String file) {
+	public Logger(String file) {
 		super();
 
 		try {
