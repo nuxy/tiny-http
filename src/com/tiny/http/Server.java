@@ -46,7 +46,7 @@ public class Server implements Runnable {
 		logger.publish(new LogRecord(Level.INFO, "Starting server on port " + port));
 
 		try {
-			ServerSocket listener = new ServerSocket(new Integer(port));
+			ServerSocket listener = new ServerSocket(Integer.valueOf(port));
 
 			try {
 				logger.publish(new LogRecord(Level.INFO, "Waiting for client requests..."));
