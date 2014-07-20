@@ -2,7 +2,7 @@
  *  tiny-http (Server.java)
  *  A compact, multi-threaded, HTTP server written in Java
  *
- *  Copyright 2013, Marc S. Brooks (http://mbrooks.info)
+ *  Copyright 2013-2014, Marc S. Brooks (http://mbrooks.info)
  *  Licensed under the MIT license:
  *  http://www.opensource.org/licenses/mit-license.php
  */
@@ -21,7 +21,6 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.activation.MimetypesFileTypeMap;
 
 public class Server implements Runnable {
 	private Config config;
@@ -132,10 +131,8 @@ public class Server implements Runnable {
 				return;
 			}
 
-			MimetypesFileTypeMap map = new MimetypesFileTypeMap("mime.types");
-
 			String name = new File(f).getName();
-			String type = map.getContentType(name);
+			String type = MIME.getContentType(name);
 
 			output.writeBytes(genHeader(200, type) + "\r\n" + file.toString());
 

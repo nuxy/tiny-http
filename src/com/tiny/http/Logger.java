@@ -2,7 +2,7 @@
  *  tiny-http (Logger.java)
  *  A compact, multi-threaded, HTTP server written in Java
  *
- *  Copyright 2013, Marc S. Brooks (http://mbrooks.info)
+ *  Copyright 2013-2014, Marc S. Brooks (http://mbrooks.info)
  *  Licensed under the MIT license:
  *  http://www.opensource.org/licenses/mit-license.php
  */
@@ -19,6 +19,7 @@ public class Logger extends Handler {
 
 	/**
 	 * Define custom log hander
+	 * @param String file
 	 */
 	public Logger(String file) {
 		super();
